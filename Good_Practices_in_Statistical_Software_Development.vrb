@@ -1,0 +1,30 @@
+\frametitle{\protect \hypertarget {git-and-github-a-standard-de-facto}{Git and Github: a standard \emph {de facto}}}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{GitHub} is a hosting service for \texttt{Git} repositories.
+\item
+  \texttt{GitHub} offers all the \texttt{Git} functionality adding a
+  series of own characteristics.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Web and Desktop-based graphical interface.
+  \item
+    \emph{Access control}, \emph{bug tracking}, \emph{task management},
+    \emph{wikis} \ldots{}
+  \end{itemize}
+\item
+  \emph{GitHub brings together the worlds largest community of
+  developers to \textbf{discover}, \textbf{share}, and \textbf{build}
+  better software}
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=0.7\textwidth]{"images/gitAndGithub"}
+\end{center}
+
+)
+

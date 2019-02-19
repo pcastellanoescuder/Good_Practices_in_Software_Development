@@ -1,0 +1,769 @@
+\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[ignorenonframetext,]{beamer}
+\setbeamertemplate{caption}[numbered]
+\setbeamertemplate{caption label separator}{: }
+\setbeamercolor{caption name}{fg=normal text.fg}
+\beamertemplatenavigationsymbolsempty
+\usepackage{lmodern}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provides euro and other symbols
+\else % if luatex or xelatex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+\usetheme[]{Copenhagen}
+\usecolortheme{dolphin}
+\usefonttheme{structurebold}
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage[]{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\usepackage{hyperref}
+\hypersetup{
+            pdfauthor={Alex Sánchez-Pla and Pol Castellano-Escuder},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\newif\ifbibliography
+% Prevent slide breaks in the middle of a paragraph:
+\widowpenalties 1 10000
+\raggedbottom
+\setbeamertemplate{part page}{
+\centering
+\begin{beamercolorbox}[sep=16pt,center]{part title}
+  \usebeamerfont{part title}\insertpart\par
+\end{beamercolorbox}
+}
+\setbeamertemplate{section page}{
+\centering
+\begin{beamercolorbox}[sep=12pt,center]{part title}
+  \usebeamerfont{section title}\insertsection\par
+\end{beamercolorbox}
+}
+\setbeamertemplate{subsection page}{
+\centering
+\begin{beamercolorbox}[sep=8pt,center]{part title}
+  \usebeamerfont{subsection title}\insertsubsection\par
+\end{beamercolorbox}
+}
+\AtBeginPart{
+  \frame{\partpage}
+}
+\AtBeginSection{
+  \ifbibliography
+  \else
+    \frame{\sectionpage}
+  \fi
+}
+\AtBeginSubsection{
+  \frame{\subsectionpage}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+\def\begincols{\begin{columns}}
+\def\begincol{\begin{column}}
+\def\endcol{\end{column}}
+\def\endcols{\end{columns}}
+
+\title{Good Practices in (Statistical)\\
+Software Development}
+\author{Alex Sánchez-Pla and Pol Castellano-Escuder}
+\date{Genetics, Microbiology and Statistic Department. UB\\
+Statistics and Bioinformatics Unit. VHIR\\
+Grup de Recerca en Bioestadí­stica i Bioinformatica (GRBio)\\
+
+\vspace{1cm}
+
+Jan 26, 2019 - BIOSTATNET Meeting}
+
+\begin{document}
+\frame{\titlepage}
+
+\begin{frame}
+
+\begin{block}{Readme}
+
+\begin{itemize}
+\item
+  License: Creative Commons Attribution-NonCommercial-ShareAlike 4.0
+  International License
+  \url{http://creativecommons.org/licenses/by-nc-sa/4.0/}
+\item
+  You are free to:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{Share} : copy and redistribute the material
+  \item
+    \textbf{Adapt} : rebuild and transform the material
+  \end{itemize}
+\item
+  Under the following conditions:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{Attribution} : You must give appropriate credit, provide a
+    link to the license, and indicate if changes were made.
+  \item
+    \textbf{NonCommercial} : You may not use this work for commercial
+    purposes.
+  \item
+    \textbf{Share Alike} : If you remix, transform, or build upon this
+    work, you must distribute your contributions under the same license
+    to this one.
+  \end{itemize}
+\end{itemize}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{%
+\protect\hypertarget{outline}{%
+Outline}}
+
+\begin{itemize}
+\tightlist
+\item
+  Introduction to the session.
+\item
+  Statistics and Programming
+
+  \begin{itemize}
+  \tightlist
+  \item
+    The role of coding in statistical work
+  \item
+    Teaching programming to statisticians and data scientists
+  \end{itemize}
+\item
+  Can we build better software (software better?)
+
+  \begin{itemize}
+  \tightlist
+  \item
+    When do we call a piece of software “good”?
+  \item
+    Which aspects should we account for
+  \end{itemize}
+\item
+  Good practices for statistical software development
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{%
+\protect\hypertarget{introduction}{%
+Introduction}}
+
+\begin{itemize}
+\tightlist
+\item
+  Presenter: Alex Sánchez Pla
+\item
+  Job 1: Associate Professor. Statistics department, UB. “Traditional
+  approach”
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Teach statistics (SI, ED), make research (GRBio)
+  \item
+    Mostly programmed for myself. Some R packages.
+  \end{itemize}
+\item
+  Job 2: Head of Statistics and Bioinformatics Unit. “Real world”
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Coordinate (more than do) applied biostatistics and bioinformatics.
+  \item
+    Lots of data, lots of programming
+  \item
+    Discovered new concepts: Validation, Regulation, SOPs, Best
+    Practices, \ldots{}
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{%
+\protect\hypertarget{what-is-software-development}{%
+What is software development}}
+
+\begin{itemize}
+\item
+  \emph{Software development is a process by which standalone or
+  individual software is created using a specific programming language.
+  It involves writing a series of interrelated programming code, which
+  provides the functionality of the developed software}
+\item
+  Simple, yet functional. It embraces most programming activities we may
+  be involved in,
+
+  \begin{itemize}
+  \tightlist
+  \item
+    From writing simple scripts, automating functions, running
+    simulations.
+  \item
+    Creating web programs, mobile apps, etc.
+  \item
+    But also writing code for performing any type of statisytical
+    analyses.
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{%
+\protect\hypertarget{how-do-we-do-software-development}{%
+How do we do software development?}}
+
+\begin{figure}
+\includegraphics[width=0.95\textwidth]{"images/programmingSurvey"}
+\end{figure}
+
+\url{https://servirredcap.vhir.org/redcap/surveys/?s=J3RW8YPFXF}
+
+\end{frame}
+
+\begin{frame}{%
+\protect\hypertarget{how-important-is-programming-in-a-mathematicians-training}{%
+How important is programming in a mathematician’s training?}}
+
+\begin{figure}
+\includegraphics[width=0.75\textwidth]{"images/coursesMathematics"}
+\caption{Compulsory courses. Mathematics degree. UPC. (One course)}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{%
+\protect\hypertarget{how-important-is-programming-in-a-statisticians-training}{%
+How important is programming in a statistician’s training?}}
+
+\begin{figure}
+\includegraphics[width=0.85\textwidth]{"images/coursesAppliedStatsUAB"}
+\caption{Compulsory courses. Applied Statistics degree at UAB. (Three courses)}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{%
+\protect\hypertarget{how-important-is-programming-in-a-data-scientists-training}{%
+How important is programming in a data scientist’s training?}}
+
+\begin{figure}
+\includegraphics[width=0.75\textwidth]{"images/coursesDataEngineeringUPC"}
+\caption{Compulsory courses. Data Engineering degree. UPC. (Five courses)}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{%
+\protect\hypertarget{good-practices-in-statistical-software-development}{%
+Good practices in (statistical) software development}}
+
+\begin{itemize}
+\tightlist
+\item
+  \emph{A good practice is not only a practice that is good, but a
+  practice that has been proven to work well and produce good results,
+  and is therefore recommended as a model}.
+\item
+  There is no universally accepted list of ``good practices’’ for
+  software development but we can easily agree (can we?) on some
+  practices that (maybe) can help our programs to be better.
+\item
+ When we talk about software, we must bear in mind that there are many different types of software and that, sometimes, "good practices" can be different between software types. Some types of software could be: CLI (Command Line Interface), GUI (Graphical User Interface), Scripts, Packages or Web Apps.
+ 
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{%
+\protect\hypertarget{best-practices-in-software-engineering}{%
+Best practices in Software Engineering}}
+
+\includegraphics[width=0.75\textwidth]{"images/bestPracticesSoftwareEngineering"}
+
+\begin{itemize}
+\tightlist
+\item
+  We don’t discuss this!
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{%
+\protect\hypertarget{good-practices-in-statistical-software-development-1}{%
+Good practices in Statistical Software Development}}
+
+\begin{itemize}
+\tightlist
+\item
+  Instead I have browsed through some materials which focus on
+  statistical software development
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=0.9\textwidth]{"images/oodPractices4RProgramming"}
+\end{center}
+
+\end{frame}
+
+\begin{frame}{%
+\protect\hypertarget{gp-document-your-code}{%
+GP: Document your code}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Comment} as much as you can.
+\item
+  Write \textbf{help} for your programs.
+\item
+  Create \textbf{user manuals} and \textbf{user guides}.
+\item
+  Use tools to facilitate documentation building.
+
+  \begin{center}
+  \includegraphics[width=0.7\textwidth]{"images/roxygen"}
+  \end{center}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{%
+\protect\hypertarget{gp-modularize}{%
+GP: Modularize}}
+
+”Modular programming consists in separate the functionality of a program
+into independent and interchangeable modules.”
+
+\begin{itemize}
+\tightlist
+\item
+  If a piece of code has to be used repeteadly or it is too long to
+  affect code legibility it is recommended to encapsulate it into some
+  type of \emph{module}
+\item
+  Modularization can happen at distinct levels.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \emph{functions}
+  \item
+    \emph{classes and methods} (OOP)
+  \item
+    \emph{libraries} or \emph{packages}
+  \end{itemize}
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=0.6\textwidth]{"images/modularProgramming"}
+\end{center}
+
+\end{frame}
+
+\begin{frame}{%
+\protect\hypertarget{gp-literate-programming-enhances-reproducibility}{%
+GP: Literate programming enhances reproducibility}}
+
+\begin{itemize}
+\item
+  \textbf{Literate programming}: Enhances traditional software
+  development by embedding code in explanatory essays and encourages
+  \emph{treating the act of development as one of communication}.
+\item
+  \textbf{Reproducible research}: Embeds executable code in research
+  reports and publications, with the aim of \emph{allowing readers to
+  re-run the analyses described}.
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=0.6\textwidth]{"images/orgMode"}
+\end{center}
+
+\end{frame}
+
+\begin{frame}{%
+\protect\hypertarget{reproducible-research-with-r-and-rstudio}{%
+Reproducible research with R and Rstudio}}
+
+\begin{itemize}
+\tightlist
+\item
+  Using literate programing for reproducible research is a change of
+  paradigm.
+\item
+  Coding, Analyzing and Reporting become a unique piece of work.
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=0.6\textwidth]{"images/reproducibleResearchWithR"}
+\end{center}
+
+\end{frame}
+
+\begin{frame}{%
+\protect\hypertarget{gp-use-control-version-systems-cvs}{%
+GP: Use Control Version Systems (CVS)}}
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{"images/whyWeNeedCVS"}
+\end{center}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Version control systems} are a category of software tools that
+  help a software developper/team manage changes to source code over
+  time.
+\item
+  \textbf{Version control software} keeps track of every modification to
+  the code in a special kind of database.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    If a mistake is made, developers can turn back the clock and compare
+    earlier versions of the code to help fix the mistake while
+    minimizing disruption to all team members.
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{%
+\protect\hypertarget{type-of-control-version-systems}{%
+Type of Control version systems}}
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{"images/ccvs-dcvs"}
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]{%
+\protect\hypertarget{git-and-github-a-standard-de-facto}{%
+Git and Github: a standard \emph{de facto}}}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{GitHub} is a hosting service for \texttt{Git} repositories.
+\item
+  \texttt{GitHub} offers all the \texttt{Git} functionality adding a
+  series of own characteristics.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Web and Desktop-based graphical interface.
+  \item
+    \emph{Access control}, \emph{bug tracking}, \emph{task management},
+    \emph{wikis} \ldots{}
+  \end{itemize}
+\item
+  \emph{GitHub brings together the worlds largest community of
+  developers to \textbf{discover}, \textbf{share}, and \textbf{build}
+  better software}
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=0.7\textwidth]{"images/gitAndGithub"}
+\end{center}
+
+)
+
+\end{frame}
+
+\begin{frame}{%
+\protect\hypertarget{gp-share-your-programs}{%
+GP: Share your programs}}
+
+\begin{itemize}
+\tightlist
+\item
+  Sharing software is one great way to improve it.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Developers take care of details so that users will be staisfied with
+    the program.
+  \item
+    Users can provide feedback and can help improve the program.
+  \end{itemize}
+\item
+  Sharing can be done in many different ways
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Put a library in a repository
+  \item
+    Create a web page
+  \item
+    Sell the program
+  \end{itemize}
+\item
+  Many scientist’s work is better known by their software tools than by
+  their papers
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{%
+\protect\hypertarget{gp-verify-and-validate-your-software}{%
+GP: Verify and Validate your software}}
+
+\begin{itemize}
+\tightlist
+\item
+  How do we know that the code does what it is intended to do?
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Prepare a battery of tests, apply them. Document it.
+  \end{itemize}
+\item
+  How do we know that our code contains no mistakes?
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Make someone else review your work. Document it.
+  \end{itemize}
+\item
+  How do we know if the code can be installed and set to work?
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Make someone else install and run the programs. Document it.
+  \end{itemize}
+\end{itemize}
+
+\begin{center}
+\includegraphics[height=0.5\textwidth]{"images/Verification-and-Validation"}
+\end{center}
+
+)
+
+\end{frame}
+
+\begin{frame}{%
+\protect\hypertarget{gp-optimize-efficiently}{%
+GP: Optimize efficiently}}
+
+\begin{itemize}
+\tightlist
+\item
+  Optimization may improve a program’s performance \emph{if it doesn’t
+  consume more time than the time it saves}.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Before you start to optimise your code, ensure you know where the
+    bottleneck lies; use a code profiler.
+  \item
+    Use the appropriate data structures (e.g.~matrices instead of data
+    frames) and
+  \item
+    Use the right functions to work with them (Use specialised row and
+    column functions whenever possible)
+  \end{itemize}
+\item
+  Learn to use techniques that can improve speed orders of magnitude.
+  Apply if needed.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Parallelization can be great if many processes will be executed “in
+    parallel” (e.g.~Monte Carlo SImulations)
+  \item
+    Learn to combine languages. Consider re-writing key parts of your
+    code in C++.
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{%
+\protect\hypertarget{gp-manage-error-control-and-detection-proactively}{%
+GP: Manage error control and detection proactively}}
+
+\begin{itemize}
+\tightlist
+\item
+  Testing and reviewing can detect some errors
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Some of these (e.g.~programmers’ errors) can be removed.
+  \item
+    Others (e.g.~wrong input) cannot be avoided.
+  \end{itemize}
+\item
+  Learn \textbf{how to debug} your code
+\item
+  \textbf{Plan reaction to errors} according to their severity.
+\item
+  Learn how to do \textbf{Exception handling} tho help avoid program
+  crashes.
+\end{itemize}
+
+\begin{center}
+\includegraphics[height=0.3\textheight]{"images/errorHandling"}
+\end{center}
+
+\end{frame}
+
+\begin{frame}{%
+\protect\hypertarget{gp-plan-the-process}{%
+GP: Plan the process}}
+
+\textbf{Think, plan, code it!} And NOT in another order!\\ 
+This will not take much time but, however, will save us a significant
+amount of time.
+
+\begin{itemize}
+\tightlist
+\item
+  Software development is a \textbf{process}
+\item
+  There exist a myriad of methodologies and tools for planning and
+  executing. Use the one you prefer.
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=0.9\textwidth]{"images/softwareDevelopmentProcess"}
+\end{center}
+
+\begin{itemize}
+	\tightlist
+	\item
+	What we want? How are we going to do it? How do we want the output/s?
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{%
+		\protect\hypertarget{gp-design}{%
+			GP: Design}}
+	\begin{itemize}
+		\item
+		Design or aesthetics may not seem so important, but nevertheless they are,
+		especially in web applications.
+		\item
+		Sometimes, a very good software with a design that does not attract the
+		user may not give the maximum performance that is expected of it.
+		However, if the software is friendly and is accompanied by a good design,
+		we can obtain better results.
+		\item
+		To achieve this goal, we suggest the use of html, css, markdown,
+		rmarkdown, javascript, latex...
+    \end{itemize}
+    
+\end{frame}
+
+\begin{frame}{%
+\protect\hypertarget{gp-other-good-practices}{%
+GP: Other good practices}}
+
+  It is easy to find lists of good or best practices in software development. \textbf{Just go through them and select thos that fit best you or your project!}
+
+\end{frame}
+
+\begin{frame}{%
+\protect\hypertarget{in-summary}{%
+Conclusions}}
+
+\begin{itemize}
+\item
+  Software development may be a “secondary” activity or may be our main
+  source of work.
+\item
+  The more we know about software development the better we can do the
+  job.
+\item
+  Applying a few good practices can considerably improve our
+  performance.
+\item
+  Remember that:
+\end{itemize}
+
+\emph{"You shouldn’t feel ashamed about your code -if it solves the
+problem, it’s perfect the way it is. But also, it could always be
+better"}
+
+-Hadley Wickam
+
+\end{frame}
+
+\begin{frame}{%
+		\protect\hypertarget{summary}{%
+			Good Practices Summary}}
+	
+	\begin{itemize}
+		\item Documentation
+		
+		\item Modularize
+		
+		\item Literate programming
+		
+		\item Version Control
+		
+		\item Share our programs
+		
+		\item Verify and Validate
+		
+		\item Optimize efficiently
+		
+		\item Error Control
+		
+		\item Planification
+		
+		\item Design
+		
+	\end{itemize}
+	
+\end{frame}
+	
+\end{document}
